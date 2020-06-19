@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "suisei-worker",
+  "version": "1.0.0",
+  "description": "worker behind suisei.moe",
+  "main": "src/index.js",
+  "scripts": {},
+  "author": "Daniel Zeng <daniel65536@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "aws4fetch": "^1.0.0"
+  }
+}
