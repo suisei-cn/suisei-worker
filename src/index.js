@@ -10,12 +10,43 @@ async function handleRequest(request) {
     return new Response('Method Not Allowed', { status: 405 })
   }
 
-  const path = new URL(request.url).pathname
+  const url = new URL(request.url)
+  const path = url.pathname
   const range = request.headers.get('range')
 
   if (path === '/podcast.xml') {
-    return genPodcast()
+    let lang = 'en'
+    const country = (() => {
+      try {
+        return request.cf.country
+      } catch (_) {
+        return ''
+      }
+    })()
+    switch (country) {
+      case 'JP': {
+        lang = 'ja'
+        break
+      }
+      case 'CN': {
+        lang = 'zh-hans'
+        break
+      }
+      case 'HK':
+      case 'TW': {
+        lang = 'zh-hant'
+        break
+      }
+    }
+    const langParam = url.searchParams.get('lang')
+    if (langParam === 'zh') {
+      lang = 'zh-hans'
+    } else if (langParam !== null) {
+      lang = langParam
+    }
+    const filterParam = Number(url.searchParams.get('filter')) || 0
+    return genPodcast(url, lang, filterParam)
   }
 
-  return getObject(path, range)
+  return new Response("Working", { status: 200})
 }
