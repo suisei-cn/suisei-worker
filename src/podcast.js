@@ -96,7 +96,7 @@ async function createPodcast(body, url, lang, filter) {
   }
   for (const i of bodyFiltered) {
     const time = new Date(i.datetime)
-    const readableTime = dayjs(time).format('YYYY/MM/DD HH:mm')
+    const readableTime = dayjs(time).add(9, 'hour').format('YYYY/MM/DD HH:mm')
     feed.addItem({
       title: i.title,
       description:
