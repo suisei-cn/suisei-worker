@@ -6,7 +6,7 @@ addEventListener('fetch', (event) => {
 })
 
 async function handleRequest(request) {
-  if (request.method != 'GET') {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method Not Allowed', { status: 405 })
   }
 
@@ -45,8 +45,17 @@ async function handleRequest(request) {
       lang = langParam
     }
     const filterParam = Number(url.searchParams.get('filter')) || 0
-    return genPodcast(url, lang, filterParam)
+    return genPodcast(url, lang, filterParam, request.method)
   }
 
-  return getObject(path, range)
+  const ret = await getObject(path, range, request.method)
+  if (request.method === 'HEAD' && path.match(/\.json$/) !== null) {
+    const newHeaders = new Headers(ret.headers)
+    newHeaders.set('access-control-allow-origin', '*')
+    return new Response('', {
+      headers: newHeaders,
+      status: 200,
+    })
+  }
+  return ret
 }
