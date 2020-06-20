@@ -124,15 +124,26 @@ async function createPodcast(body, url, lang, filter) {
   return feed.buildXml('  ')
 }
 
-export async function genPodcast(url, lang, filter) {
+export async function genPodcast(url, lang, filter, method) {
   const resp = await getObject('/meta.json')
   const items = await resp.json()
   const ret = await createPodcast(items, url, lang, filter)
+
+  if (method === 'HEAD') {
+    return new Response('', {
+      status: 200,
+      headers: {
+        'content-type': 'text/xml',
+        'content-length': ret.length,
+      },
+    })
+  }
 
   return new Response(ret, {
     status: 200,
     headers: {
       'content-type': 'text/xml',
+      'content-length': ret.length,
     },
   })
 }

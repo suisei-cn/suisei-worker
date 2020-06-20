@@ -18,13 +18,13 @@ const params = {
   },
 }
 
-export async function getObject(key, range) {
+export async function getObject(key, range, method = 'GET') {
   const headers = range ? { range: range } : {}
   const url = new URL(key, AWS_S3_ENDPOINT)
   url.search = new URLSearchParams(params[key.split('.').pop()])
 
   return await aws.fetch(url, {
-    method: 'GET',
+    method,
     headers: headers,
     cf: { cacheEverything: true },
   })
