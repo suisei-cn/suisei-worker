@@ -17,5 +17,5 @@ async function handleRequest(request) {
     return genPodcast()
   }
 
-  return getObject(path, range)
+  return new Response("Working", { status: 200})
 }

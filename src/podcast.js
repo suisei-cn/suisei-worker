@@ -1,52 +1,99 @@
 import { getObject } from './asset'
+import podcast from 'podcast'
+import dayjs from 'dayjs'
 
-function genItem(item) {
-  return `<item>
-<enclosure url="${item.url}" length="0" type="audio/mpeg"/>
-<guid isPermaLink="true">${item.url}</guid>
-<title><![CDATA[${item.title}]]></title>
-<pubDate>${new Date(item.datetime).toUTCString()}</pubDate>
-<description><![CDATA[${item.title}, originally by ${
-    item.artist
-  }, performed by ${item.performer} at ${item.datetime}]]></description>
-<content:encoded><![CDATA[
-<p>Song name: ${item.title}</p>
-<p>Originally by ${item.artist}</p>
-<p>Performed by: ${item.performer}</p>
-<p>Performed at: ${item.datetime}</p>
-<br>
-<p>
-This podcast is powered by suisei-cn. See the music list <a href="https://github.com/suisei-cn/suisei-music/">here</a>. <br>
-If things don't seem right, report it <a href="https://github.com/suisei-cn/suisei-podcast/issues">here</a>.
-</p>
-]]></content:encoded>
-</item>`
+function generateNotice(item) {
+  let ret = []
+  const status = item.status || 0
+  if (status & 1) {
+    ret.push('🎤 This clip is an acappella with no background music.')
+  }
+  if (status & 2) {
+    ret.push(
+      '😟 The source for this clip is corrupted due to various problems.',
+    )
+  }
+  if (status & 4) {
+    ret.push(
+      '🔇 This clip is muted in the source due to concerns on copyright.',
+    )
+  }
+  if (ret.length !== 0) {
+    return (
+      '<p>This episode has the following flags:\n<ul>' +
+      ret.map((x) => `<li>${x}</li>`).join('\n') +
+      '</ul>\n</p>'
+    )
+  } else {
+    return ''
+  }
 }
 
-function genFeed(items) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-<channel>
-<title>Suisei Music Podcast</title>
-<link>https://github.com/suisei-cn/suisei-music</link>
-<itunes:author>星街すいせい工房</itunes:author>
-<description>Collection of music of suisei. Powered by suisei-cn.</description>
-<itunes:owner>
-<itunes:name>星街すいせい工房</itunes:name>
-</itunes:owner>
-<itunes:image href="https://suisei.moe/image/podcast.jpeg"/>
-<itunes:category text="Music"/>
-<itunes:explicit>false</itunes:explicit>
-${items.map(genItem).join('\n')}
-</channel>
-</rss>`
+function generateContent(item, original, time) {
+  return `
+    <p>Song name: ${item.title}</p>
+    ${
+      original
+        ? `<p>An original song by 星街すいせい</p>`
+        : `<p>Originally by ${item.artist}</p>`
+    }
+    <p>Performed by: ${item.performer}</p>
+    <p>Performed at: ${time}</p>
+    <p>Source: <a href="${item.source}">${item.source}</a></p>
+    ${generateNotice(item)}
+    <br>
+    <p>
+    This podcast is powered by suisei-cn. See the music list <a href="https://github.com/suisei-cn/suisei-music/">here</a>. <br>
+    If things don't seem right, report it <a href="https://github.com/suisei-cn/suisei-podcast/issues">here</a>.
+    </p>
+    `
+}
+
+async function createPodcast(body) {
+  const feed = new podcast({
+    title: 'Suisei Music Podcast',
+    description: 'Collection of music of suisei. Powered by suisei-cn.',
+    generator: 'podcast@npmjs',
+    feedUrl: 'https://suisei-cn.github.io/suisei-podcast/feed.xml',
+    siteUrl: 'https://github.com/suisei-cn/suisei-podcast',
+    imageUrl: 'https://suisei.moe/image/podcast.jpeg',
+    author: '星街すいせい工房',
+    categories: ['music', 'virtual youtuber'],
+    itunesType: 'episodic',
+    itunesCategory: [
+      {
+        text: 'Arts',
+        subcats: [{ text: 'Performing Arts' }],
+      },
+    ],
+    pubDate: new Date(),
+  })
+  for (const i of body) {
+    const time = new Date(i.datetime)
+    const readableTime = dayjs(time).format('YYYY/MM/DD HH:mm')
+    feed.addItem({
+      title: i.title,
+      description:
+        i.artist === '星街すいせい'
+          ? `${i.title}, an original song by 星街すいせい performed on ${readableTime}.`
+          : `${i.title}, originally by ${i.artist}, performed by 星街すいせい on ${readableTime}`,
+      content: generateContent(i, i.artist === '星街すいせい', readableTime),
+      url: i.url,
+      enclosure: {
+        url: i.url,
+      },
+      date: time,
+    })
+  }
+  return feed.buildXml('  ')
 }
 
 export async function genPodcast(params) {
   const resp = await getObject('/meta.json')
   const items = await resp.json()
+  const ret = await createPodcast(items)
 
-  return new Response(genFeed(items), {
+  return new Response(ret, {
     status: 200,
     headers: {
       'content-type': 'text/xml',

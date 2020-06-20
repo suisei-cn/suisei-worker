@@ -1,9 +1,9 @@
 import { AwsClient } from 'aws4fetch'
 
 const aws = new AwsClient({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  region: AWS_DEFAULT_REGION,
+  accessKeyId: "",
+  secretAccessKey: "",
+  region: "",
   service: 's3',
 })
 
@@ -20,7 +20,7 @@ const params = {
 
 export async function getObject(key, range) {
   const headers = range ? { range: range } : {}
-  const url = new URL(key, AWS_S3_ENDPOINT)
+  const url = new URL(key, "")
   url.search = new URLSearchParams(params[key.split('.').pop()])
 
   return await aws.fetch(url, {
