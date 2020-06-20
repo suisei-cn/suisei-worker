@@ -6,6 +6,16 @@ addEventListener('fetch', (event) => {
 })
 
 async function handleRequest(request) {
+  if (request.method === 'OPTIONS') {
+    return new Response('', {
+      status: 200,
+      headers: {
+        Allow: 'OPTIONS, GET, HEAD',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+  }
+
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method Not Allowed', { status: 405 })
   }
@@ -49,13 +59,5 @@ async function handleRequest(request) {
   }
 
   const ret = await getObject(path, range, request.method)
-  if (request.method === 'HEAD' && path.match(/\.json$/) !== null) {
-    const newHeaders = new Headers(ret.headers)
-    newHeaders.set('access-control-allow-origin', '*')
-    return new Response('', {
-      headers: newHeaders,
-      status: 200,
-    })
-  }
   return ret
 }
