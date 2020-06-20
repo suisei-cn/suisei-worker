@@ -1,0 +1,7 @@
+name = "suisei-worker"
+type = "webpack"
+account_id = "d943cc2f5cb1c859431f772ad9f8e93e"
+workers_dev = true
+route = ""
+zone_id = ""
+webpack_config = "webpack.config.js"
