@@ -49,13 +49,30 @@ function generateContent(item, original, time) {
     `
 }
 
-async function createPodcast(body) {
+function getFilterTitle(filter) {
+  let ret = []
+  if (filter & 1) {
+    ret.push('Acappella')
+  }
+  if (filter & 2) {
+    ret.push('Corrupted')
+  }
+  if (filter & 4) {
+    ret.push('Slient')
+  }
+  return ret.join(', ')
+}
+
+async function createPodcast(body, url, lang, filter) {
+  let filterTitle = getFilterTitle(filter)
   const feed = new podcast({
-    title: 'Suisei Music Podcast',
-    description: 'Collection of music of suisei. Powered by suisei-cn.',
+    title: 'Suisei Music Podcast' + (filter !== 0 ? ` (${filterTitle})` : ''),
+    description:
+      'Collection of music of suisei. Powered by suisei-cn.' +
+      (filter !== 0 ? ` (Filter applied: ${filterTitle})` : ''),
     generator: 'podcast@npmjs',
-    feedUrl: 'https://suisei-cn.github.io/suisei-podcast/feed.xml',
-    siteUrl: 'https://github.com/suisei-cn/suisei-podcast',
+    feedUrl: url || 'https://suisei.moe/podcast.xml',
+    siteUrl: 'https://github.com/suisei-cn/suisei-worker',
     imageUrl: 'https://suisei.moe/image/podcast.jpeg',
     author: '星街すいせい工房',
     categories: ['music', 'virtual youtuber'],
@@ -68,7 +85,11 @@ async function createPodcast(body) {
     ],
     pubDate: new Date(),
   })
-  for (const i of body) {
+  let bodyFiltered = body
+  if (filter !== 0) {
+    bodyFiltered = body.filter((x) => x.status & filter)
+  }
+  for (const i of bodyFiltered) {
     const time = new Date(i.datetime)
     const readableTime = dayjs(time).format('YYYY/MM/DD HH:mm')
     feed.addItem({
@@ -88,10 +109,10 @@ async function createPodcast(body) {
   return feed.buildXml('  ')
 }
 
-export async function genPodcast(params) {
+export async function genPodcast(url, lang, filter) {
   const resp = await getObject('/meta.json')
   const items = await resp.json()
-  const ret = await createPodcast(items)
+  const ret = await createPodcast(items, url, lang, filter)
 
   return new Response(ret, {
     status: 200,
