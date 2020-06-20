@@ -8,10 +8,12 @@ addEventListener('fetch', (event) => {
 async function handleRequest(request) {
   if (request.method === 'OPTIONS') {
     return new Response('', {
-      status: 200,
+      status: 204,
       headers: {
-        Allow: 'OPTIONS, GET, HEAD',
+        'Access-Control-Allow-Methods': 'OPTIONS, GET, HEAD',
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Max-Age': 86400,
       },
     })
   }
@@ -59,5 +61,16 @@ async function handleRequest(request) {
   }
 
   const ret = await getObject(path, range, request.method)
+  if (path.match(/\.json$/) !== null) {
+    const newHeaders = new Headers(ret.headers)
+    newHeaders.set('Access-Control-Allow-Methods', 'OPTIONS, GET, HEAD')
+    newHeaders.set('Access-Control-Allow-Origin', '*')
+    newHeaders.set('Access-Control-Allow-Headers', '*')
+    newHeaders.set('Access-Control-Max-Age', 86400)
+    return new Response(ret.body, {
+      headers: newHeaders,
+      status: 200,
+    })
+  }
   return ret
 }
