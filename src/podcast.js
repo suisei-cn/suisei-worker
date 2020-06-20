@@ -1,4 +1,5 @@
 import { getObject } from './asset'
+import { setLang, $t } from './podcast_l10n'
 import podcast from 'podcast'
 import dayjs from 'dayjs'
 
@@ -6,21 +7,21 @@ function generateNotice(item) {
   let ret = []
   const status = item.status || 0
   if (status & 1) {
-    ret.push('🎤 This clip is an acappella with no background music.')
+    ret.push($t('🎤 This clip is an acappella with no background music.'))
   }
   if (status & 2) {
     ret.push(
-      '😟 The source for this clip is corrupted due to various problems.',
+      $t('😟 The source for this clip is corrupted due to various problems.'),
     )
   }
   if (status & 4) {
     ret.push(
-      '🔇 This clip is muted in the source due to concerns on copyright.',
+      $t('🔇 This clip is muted in the source due to concerns on copyright.'),
     )
   }
   if (ret.length !== 0) {
     return (
-      '<p>This episode has the following flags:\n<ul>' +
+      $t('<p>This episode has the following flags:\n<ul>') +
       ret.map((x) => `<li>${x}</li>`).join('\n') +
       '</ul>\n</p>'
     )
@@ -31,20 +32,23 @@ function generateNotice(item) {
 
 function generateContent(item, original, time) {
   return `
-    <p>Song name: ${item.title}</p>
+    <p>${$t('Song name')}: ${item.title}</p>
     ${
       original
-        ? `<p>An original song by 星街すいせい</p>`
-        : `<p>Originally by ${item.artist}</p>`
+        ? $t(`<p>An original song by 星街すいせい</p>`)
+        : `<p>${$t('Originally by')} ${item.artist}</p>`
     }
-    <p>Performed by: ${item.performer}</p>
-    <p>Performed at: ${time}</p>
-    <p>Source: <a href="${item.source}">${item.source}</a></p>
+    <p>${$t('Performed by')}: ${item.performer}</p>
+    <p>${$t('Performed at')}: ${time}</p>
+    <p>${$t('Source')}: <a href="${item.source}">${item.source}</a></p>
     ${generateNotice(item)}
     <br>
     <p>
-    This podcast is powered by suisei-cn. See the music list <a href="https://github.com/suisei-cn/suisei-music/">here</a>. <br>
-    If things don't seem right, report it <a href="https://github.com/suisei-cn/suisei-podcast/issues">here</a>.
+    ${$t(
+      'This podcast is powered by suisei-cn. See the music list <a href="%s">here</a>.<br>If things don\'t seem right, report it <a href="%s">here</a>.',
+      'https://github.com/suisei-cn/suisei-music/',
+      'https://github.com/suisei-cn/suisei-podcast/issues',
+    )}
     </p>
     `
 }
@@ -64,11 +68,12 @@ function getFilterTitle(filter) {
 }
 
 async function createPodcast(body, url, lang, filter) {
+  setLang(lang)
   let filterTitle = getFilterTitle(filter)
   const feed = new podcast({
     title: 'Suisei Music Podcast' + (filter !== 0 ? ` (${filterTitle})` : ''),
     description:
-      'Collection of music of suisei. Powered by suisei-cn.' +
+      $t('Collection of music of suisei. Powered by suisei-cn.') +
       (filter !== 0 ? ` (Filter applied: ${filterTitle})` : ''),
     generator: 'podcast@npmjs',
     feedUrl: url || 'https://suisei.moe/podcast.xml',
@@ -96,8 +101,18 @@ async function createPodcast(body, url, lang, filter) {
       title: i.title,
       description:
         i.artist === '星街すいせい'
-          ? `${i.title}, an original song by 星街すいせい performed on ${readableTime}.`
-          : `${i.title}, originally by ${i.artist}, performed by 星街すいせい on ${readableTime}`,
+          ? $t(
+              '%s, an original song by 星街すいせい performed on %s',
+              i.title,
+              readableTime,
+            )
+          : $t(
+              '%s, originally by %s, performed by %s on %s',
+              i.title,
+              i.artist,
+              i.performer,
+              readableTime,
+            ),
       content: generateContent(i, i.artist === '星街すいせい', readableTime),
       url: i.url,
       enclosure: {
