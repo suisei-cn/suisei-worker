@@ -1,7 +1,7 @@
 import { getObject } from './asset'
 import { genPodcast } from './podcast'
 
-addEventListener('fetch', event => {
+addEventListener('fetch', (event) => {
   event.respondWith(handleRequest(event.request))
 })
 
@@ -48,5 +48,5 @@ async function handleRequest(request) {
     return genPodcast(url, lang, filterParam)
   }
 
-  return new Response("Working", { status: 200})
+  return getObject(path, range)
 }
