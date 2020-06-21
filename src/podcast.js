@@ -67,7 +67,7 @@ function getFilterTitle(filter) {
   return ret.join(', ')
 }
 
-async function createPodcast(body, url, lang, filter) {
+function createPodcast(body, url, lang, filter) {
   setLang(lang)
   let filterTitle = getFilterTitle(filter)
   const feed = new podcast({
@@ -127,9 +127,9 @@ async function createPodcast(body, url, lang, filter) {
 }
 
 export async function genPodcast(url, lang, filter, method) {
-  const resp = await fetch('https://static.suisei.moe/music/meta.json')
+  const resp = await getObject('/music/meta.json')
   const items = await resp.json()
-  const ret = await createPodcast(items, url, lang, filter)
+  const ret = createPodcast(items, url, lang, filter)
 
   if (method === 'HEAD') {
     return new Response('', {
