@@ -22,7 +22,7 @@ function generateNotice(item) {
   if (ret.length !== 0) {
     return (
       $t('<p>This episode has the following flags:\n<ul>') +
-      ret.map((x) => `<li>${x}</li>`).join('\n') +
+      ret.map(x => `<li>${x}</li>`).join('\n') +
       '</ul>\n</p>'
     )
   } else {
@@ -78,7 +78,7 @@ async function createPodcast(body, url, lang, filter) {
     generator: 'podcast@npmjs',
     feedUrl: url || 'https://suisei.moe/podcast.xml',
     siteUrl: 'https://github.com/suisei-cn/suisei-worker',
-    imageUrl: 'https://suisei.moe/image/podcast.jpeg',
+    imageUrl: 'https://static.suisei.moe/image/98f560ae05c02361.jpeg',
     author: '星街すいせい工房',
     categories: ['music', 'virtual youtuber'],
     itunesType: 'episodic',
@@ -92,11 +92,13 @@ async function createPodcast(body, url, lang, filter) {
   })
   let bodyFiltered = body
   if (filter !== 0) {
-    bodyFiltered = body.filter((x) => x.status & filter)
+    bodyFiltered = body.filter(x => x.status & filter)
   }
   for (const i of bodyFiltered) {
     const time = new Date(i.datetime)
-    const readableTime = dayjs(time).add(9, 'hour').format('YYYY/MM/DD HH:mm')
+    const readableTime = dayjs(time)
+      .add(9, 'hour')
+      .format('YYYY/MM/DD HH:mm')
     feed.addItem({
       title: i.title,
       description:
@@ -125,7 +127,7 @@ async function createPodcast(body, url, lang, filter) {
 }
 
 export async function genPodcast(url, lang, filter, method) {
-  const resp = await getObject('/meta.json')
+  const resp = await fetch('https://static.suisei.moe/music/meta.json')
   const items = await resp.json()
   const ret = await createPodcast(items, url, lang, filter)
 
