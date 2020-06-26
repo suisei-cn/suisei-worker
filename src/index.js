@@ -1,23 +1,20 @@
-import { getObject } from './asset'
 import { genPodcast } from './podcast'
 
-addEventListener('fetch', (event) => {
+addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
 })
 
-async function handleRequest(request) {
-  if (request.method === 'OPTIONS') {
-    return new Response('', {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Methods': 'OPTIONS, GET, HEAD',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Max-Age': 86400,
-      },
-    })
-  }
+function detectLang(request) {
+  const params = (new URL(request.url).searchParams.get('lang') || '').split(
+    ',',
+  )
+  const headers = (request.headers.get('accept-language') || 'en')
+    .split(/:|;/)[0]
+    .trim()
+  return params || headers
+}
 
+async function handleRequest(request) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method Not Allowed', { status: 405 })
   }
@@ -27,50 +24,12 @@ async function handleRequest(request) {
   const range = request.headers.get('range')
 
   if (path === '/podcast.xml') {
-    let lang = 'en'
-    const country = (() => {
-      try {
-        return request.cf.country
-      } catch (_) {
-        return ''
-      }
-    })()
-    switch (country) {
-      case 'JP': {
-        lang = 'ja'
-        break
-      }
-      case 'CN': {
-        lang = 'zh-hans'
-        break
-      }
-      case 'HK':
-      case 'TW': {
-        lang = 'zh-hant'
-        break
-      }
-    }
-    const langParam = url.searchParams.get('lang')
-    if (langParam === 'zh') {
-      lang = 'zh-hans'
-    } else if (langParam !== null) {
-      lang = langParam
-    }
+    const lang = detectLang(request)
     const filterParam = Number(url.searchParams.get('filter')) || 0
     return genPodcast(url, lang, filterParam, request.method)
   }
 
-  const ret = await getObject(path, range, request.method)
-  if (path.match(/\.json$/) !== null) {
-    const newHeaders = new Headers(ret.headers)
-    newHeaders.set('Access-Control-Allow-Methods', 'OPTIONS, GET, HEAD')
-    newHeaders.set('Access-Control-Allow-Origin', '*')
-    newHeaders.set('Access-Control-Allow-Headers', '*')
-    newHeaders.set('Access-Control-Max-Age', 86400)
-    return new Response(ret.body, {
-      headers: newHeaders,
-      status: 200,
-    })
-  }
-  return ret
+  return new Response('Not Found', {
+    status: 404,
+  })
 }
