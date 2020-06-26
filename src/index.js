@@ -1,17 +1,38 @@
 import { genPodcast } from './podcast'
+import getLangName from './i18n'
 
-addEventListener('fetch', event => {
+addEventListener('fetch', (event) => {
   event.respondWith(handleRequest(event.request))
 })
 
+/**
+ * Return the accepted language list of a request
+ * @param {Request} request
+ * @returns {string[]} language
+ */
 function detectLang(request) {
-  const params = (new URL(request.url).searchParams.get('lang') || '').split(
-    ',',
-  )
+  const params = (new URL(request.url).searchParams.get('lang') || '')
+    .split(',')
+    .filter((x) => x)
   const headers = (request.headers.get('accept-language') || 'en')
-    .split(/:|;/)[0]
-    .trim()
-  return params || headers
+    .split(',')
+    .map((x) => {
+      x = x.trim()
+      const match = x.match(/q=([0-9\.]+)/)
+      if (match === null || isNaN(Number(match[1]))) {
+        return {
+          lang: x,
+          q: 1,
+        }
+      }
+      return {
+        lang: x.split(';')[0],
+        q: Number(match[1]),
+      }
+    })
+    .sort((a, b) => b.q - a.q)
+    .map((x) => x.lang)
+  return (params.length && params) || headers
 }
 
 async function handleRequest(request) {
@@ -24,7 +45,8 @@ async function handleRequest(request) {
   const range = request.headers.get('range')
 
   if (path === '/podcast.xml') {
-    const lang = detectLang(request)
+    const langTags = detectLang(request)
+    const lang = getLangName(langTags)
     const filterParam = Number(url.searchParams.get('filter')) || 0
     return genPodcast(url, lang, filterParam, request.method)
   }
