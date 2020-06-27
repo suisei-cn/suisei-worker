@@ -117,6 +117,7 @@ function createPodcast(body, url, lang, filter) {
             ),
       content: generateContent(i, i.artist === '星街すいせい', readableTime),
       url: i.url,
+      guid: i.source,
       enclosure: {
         url: i.url,
       },
