@@ -22,7 +22,7 @@ function generateNotice(item) {
   if (ret.length !== 0) {
     return (
       $t('<p>This episode has the following flags:\n<ul>') +
-      ret.map(x => `<li>${x}</li>`).join('\n') +
+      ret.map((x) => `<li>${x}</li>`).join('\n') +
       '</ul>\n</p>'
     )
   } else {
@@ -36,7 +36,7 @@ function generateContent(item, original, time) {
     ${
       original
         ? $t(`<p>An original song by 星街すいせい</p>`)
-        : `<p>${$t('Originally by')} ${item.artist}</p>`
+        : `<p>${$t('Originally by')}: ${item.artist}</p>`
     }
     <p>${$t('Performed by')}: ${item.performer}</p>
     <p>${$t('Performed at')}: ${time}</p>
@@ -92,13 +92,11 @@ function createPodcast(body, url, lang, filter) {
   })
   let bodyFiltered = body
   if (filter !== 0) {
-    bodyFiltered = body.filter(x => x.status & filter)
+    bodyFiltered = body.filter((x) => x.status & filter)
   }
   for (const i of bodyFiltered) {
     const time = new Date(i.datetime)
-    const readableTime = dayjs(time)
-      .add(9, 'hour')
-      .format('YYYY/MM/DD HH:mm')
+    const readableTime = dayjs(time).add(9, 'hour').format('YYYY/MM/DD HH:mm')
     feed.addItem({
       title: i.title,
       description:

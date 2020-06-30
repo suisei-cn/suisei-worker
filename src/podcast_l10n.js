@@ -18,10 +18,10 @@ const L10N = {
     'zh-hans': '曲目名',
   },
   '<p>An original song by 星街すいせい</p>': {
-    'zh-hans': '星街彗星之原创歌曲',
+    'zh-hans': '<p>星街彗星之原创歌曲</p>',
   },
   'Originally by': {
-    'zh-hans': '原作者: ',
+    'zh-hans': '原作者',
   },
   'Performed by': {
     'zh-hans': '表演者',
