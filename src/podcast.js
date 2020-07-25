@@ -36,7 +36,9 @@ function generateContent(item, original, time) {
     ${
       original
         ? $t(`<p>An original song by 星街すいせい</p>`)
-        : `<p>${$t('Originally by')}: ${item.artist}</p>`
+        : item.artist
+        ? `<p>${$t('Originally by')}: ${item.artist}</p>`
+        : ''
     }
     <p>${$t('Performed by')}: ${item.performer}</p>
     <p>${$t('Performed at')}: ${time}</p>
