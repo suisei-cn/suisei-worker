@@ -135,7 +135,7 @@ export async function genPodcast(url, lang, filter, method) {
     return new Response('', {
       status: 200,
       headers: {
-        'content-type': 'text/xml',
+        'content-type': 'application/rss+xml; charset=utf-8',
         'content-length': ret.length,
       },
     })
@@ -144,7 +144,7 @@ export async function genPodcast(url, lang, filter, method) {
   return new Response(ret, {
     status: 200,
     headers: {
-      'content-type': 'text/xml',
+      'content-type': 'application/rss+xml; charset=utf-8',
       'content-length': ret.length,
     },
   })
