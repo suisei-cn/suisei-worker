@@ -116,6 +116,7 @@ function createPodcast(body, url, lang, filter) {
             ),
       content: generateContent(i, i.artist === '星街すいせい', readableTime),
       url: i.url,
+      guid: i.url.replace("https://suisei-podcast.outv.im/", "https://static.suisei.moe/music/"),
       enclosure: {
         url: i.url,
       },
