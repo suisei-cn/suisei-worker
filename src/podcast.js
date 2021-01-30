@@ -1,4 +1,3 @@
-import { getObject } from './asset'
 import { setLang, $t } from './podcast_l10n'
 import podcast from 'podcast'
 import dayjs from 'dayjs'
@@ -127,7 +126,7 @@ function createPodcast(body, url, lang, filter) {
 }
 
 export async function genPodcast(url, lang, filter, method) {
-  const resp = await getObject('/music/meta.json')
+  const resp = await fetch("https://suisei-podcast.outv.im/meta.json")
   const items = await resp.json()
   const ret = createPodcast(items, url, lang, filter)
 
