@@ -80,7 +80,7 @@ function createPodcast(body, url, lang, filter) {
     feedUrl: url || 'https://suisei.moe/podcast.xml',
     siteUrl: 'https://github.com/suisei-cn/suisei-worker',
     imageUrl: 'https://static.suisei.moe/image/98f560ae05c02361.jpeg',
-    author: '星街すいせい工房',
+    author: 'すいせい工房',
     categories: ['music', 'virtual youtuber'],
     itunesType: 'episodic',
     itunesCategory: [
