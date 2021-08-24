@@ -79,7 +79,7 @@ function createPodcast(body, url, lang, filter) {
     generator: 'podcast@npmjs',
     feedUrl: url || 'https://suisei.moe/podcast.xml',
     siteUrl: 'https://github.com/suisei-cn/suisei-worker',
-    imageUrl: 'https://static.suisei.moe/image/98f560ae05c02361.jpeg',
+    imageUrl: 'https://cdn.jsdelivr.net/gh/suisei-cn/suisei-podcast@0423b62/logo/logo-202108.jpg',
     author: 'すいせい工房',
     categories: ['music', 'virtual youtuber'],
     itunesType: 'episodic',
