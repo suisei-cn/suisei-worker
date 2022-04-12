@@ -2,6 +2,11 @@ import { setLang, $t } from './podcast_l10n'
 import podcast from 'podcast'
 import dayjs from 'dayjs'
 
+const SUISEI_AFFILIATED = [
+  '星街すいせい',
+  'Midnight Grand Orchestra', // https://twitter.com/m_g_orchestra
+]
+
 function generateNotice(item) {
   let ret = []
   const status = item.status || 0
@@ -29,12 +34,13 @@ function generateNotice(item) {
   }
 }
 
-function generateContent(item, original, time) {
+function generateContent(item, time) {
+  const original = SUISEI_AFFILIATED.includes(item.artist)
   return `
     <p>${$t('Song name')}: ${item.title}</p>
     ${
       original
-        ? $t(`<p>An original song by 星街すいせい</p>`)
+        ? $t('<p>An original song by %s</p>', item.artist)
         : item.artist
         ? `<p>${$t('Originally by')}: ${item.artist}</p>`
         : ''
@@ -79,7 +85,8 @@ function createPodcast(body, url, lang, filter) {
     generator: 'podcast@npmjs',
     feedUrl: url || 'https://suisei.moe/podcast.xml',
     siteUrl: 'https://github.com/suisei-cn/suisei-worker',
-    imageUrl: 'https://cdn.jsdelivr.net/gh/suisei-cn/suisei-podcast@0423b62/logo/logo-202108.jpg',
+    imageUrl:
+      'https://cdn.jsdelivr.net/gh/suisei-cn/suisei-podcast@0423b62/logo/logo-202108.jpg',
     author: 'すいせい工房',
     categories: ['music', 'virtual youtuber'],
     itunesType: 'episodic',
@@ -114,9 +121,12 @@ function createPodcast(body, url, lang, filter) {
               i.performer,
               readableTime,
             ),
-      content: generateContent(i, i.artist === '星街すいせい', readableTime),
+      content: generateContent(i, readableTime),
       url: i.url,
-      guid: i.url.replace("https://suisei-podcast.outv.im/", "https://static.suisei.moe/music/"),
+      guid: i.url.replace(
+        'https://suisei-podcast.outv.im/',
+        'https://static.suisei.moe/music/',
+      ),
       enclosure: {
         url: i.url,
       },
@@ -127,7 +137,7 @@ function createPodcast(body, url, lang, filter) {
 }
 
 export async function genPodcast(url, lang, filter, method) {
-  const resp = await fetch("https://suisei-podcast.outv.im/meta.json")
+  const resp = await fetch('https://suisei-podcast.outv.im/meta.json')
   const items = await resp.json()
   const ret = createPodcast(items, url, lang, filter)
 

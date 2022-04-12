@@ -17,8 +17,8 @@ const L10N = {
   'Song name': {
     'zh-hans': '曲目名',
   },
-  '<p>An original song by 星街すいせい</p>': {
-    'zh-hans': '<p>星街彗星之原创歌曲</p>',
+  '<p>An original song by %s</p>': {
+    'zh-hans': '<p>%s 之原创歌曲</p>',
   },
   'Originally by': {
     'zh-hans': '原作者',
@@ -32,10 +32,11 @@ const L10N = {
   Source: {
     'zh-hans': '来源',
   },
-  'This podcast is powered by suisei-cn. See the music list <a href="%s">here</a>.<br>If things don\'t seem right, report it <a href="%s">here</a>.': {
-    'zh-hans':
-      '本 Podcast 由 suisei-cn 提供。<a href="%s">在此查看音频列表</a>。<br>如果内容异常，请报告至<a href="%s">此处</a>。',
-  },
+  'This podcast is powered by suisei-cn. See the music list <a href="%s">here</a>.<br>If things don\'t seem right, report it <a href="%s">here</a>.':
+    {
+      'zh-hans':
+        '本 Podcast 由 suisei-cn 提供。<a href="%s">在此查看音频列表</a>。<br>如果内容异常，请报告至<a href="%s">此处</a>。',
+    },
   '%s, an original song by 星街すいせい performed on %s': {
     'zh-hans': '%s，星街彗星原创曲，于 %s 表演',
   },
