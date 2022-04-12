@@ -1,5 +1,5 @@
 import { setLang, $t } from './podcast_l10n'
-import podcast from 'podcast'
+import { Podcast } from 'podcast'
 import dayjs from 'dayjs'
 
 const SUISEI_AFFILIATED = [
@@ -77,7 +77,7 @@ function getFilterTitle(filter) {
 function createPodcast(body, url, lang, filter) {
   setLang(lang)
   let filterTitle = getFilterTitle(filter)
-  const feed = new podcast({
+  const feed = new Podcast({
     title: 'Suisei Music Podcast' + (filter !== 0 ? ` (${filterTitle})` : ''),
     description:
       $t('Collection of music of suisei. Powered by suisei-cn.') +
