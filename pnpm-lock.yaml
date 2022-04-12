@@ -1,0 +1,50 @@
+lockfileVersion: 5.3
+
+specifiers:
+  aws4fetch: ^1.0.13
+  dayjs: ^1.11.0
+  podcast: ^2.0.0
+
+dependencies:
+  aws4fetch: 1.0.13
+  dayjs: 1.11.0
+  podcast: 2.0.0
+
+packages:
+
+  /aws4fetch/1.0.13:
+    resolution: {integrity: sha512-UTlirJkLtGbJurR9PlL4rOZ9HM1G/1/joWItpVwQ0f7j5Alldd7rfCMcy2kd0l2nDZ4LBdd6cFhrMwsEtazCNw==}
+    dev: false
+
+  /dayjs/1.11.0:
+    resolution: {integrity: sha512-JLC809s6Y948/FuCZPm5IX8rRhQwOiyMb2TfVVQEixG7P8Lm/gt5S7yoQZmC8x1UehI9Pb7sksEt4xx14m+7Ug==}
+    dev: false
+
+  /mime-db/1.25.0:
+    resolution: {integrity: sha1-wY29fHOl2/b0SgJNwNFloeexw5I=}
+    engines: {node: '>= 0.6'}
+    dev: false
+
+  /mime-types/2.1.13:
+    resolution: {integrity: sha1-4HqqnGxrmnyjASxpADrSWjnpKog=}
+    engines: {node: '>= 0.6'}
+    dependencies:
+      mime-db: 1.25.0
+    dev: false
+
+  /podcast/2.0.0:
+    resolution: {integrity: sha512-1NZe7cVabfkcMe39yOOhBMJrXC6OROLOIBkfEPayiJL59ncyJmOeO5bxolSCSGroho8jQ0zURMczyICI1U/xbw==}
+    dependencies:
+      rss: 1.2.2
+    dev: false
+
+  /rss/1.2.2:
+    resolution: {integrity: sha1-UKFpiHYTgTOnT5oF0r3I240nqSE=}
+    dependencies:
+      mime-types: 2.1.13
+      xml: 1.0.1
+    dev: false
+
+  /xml/1.0.1:
+    resolution: {integrity: sha1-eLpyAgApxbyHuKgaPPzXS0ovweU=}
+    dev: false
