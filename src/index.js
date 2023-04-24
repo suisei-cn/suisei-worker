@@ -1,10 +1,6 @@
 import { genPodcast } from './podcast'
 import getLangName from './i18n'
 
-addEventListener('fetch', (event) => {
-  event.respondWith(handleRequest(event.request))
-})
-
 /**
  * Return the accepted language list of a request
  * @param {Request} request
@@ -54,4 +50,10 @@ async function handleRequest(request) {
   return new Response('Not Found', {
     status: 404,
   })
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    return handleRequest(request)
+  },
 }
