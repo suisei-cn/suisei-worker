@@ -1,6 +1,7 @@
-account_id = "d943cc2f5cb1c859431f772ad9f8e93e"
-compatibility_date = "2023-04-24"
+account_id = "88c7f393389968132a873a396196fe80"
+compatibility_date = "2023-05-30"
 main = "src/index.js"
 name = "suisei-worker"
 node_compat = true
 workers_dev = true
+route = { pattern = "suisei.outv.im/*", zone_name = "outv.im" }
