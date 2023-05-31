@@ -1,7 +1,7 @@
-account_id = "88c7f393389968132a873a396196fe80"
+account_id = "e64f119e1bec3ee9fd568daf2a8d5ee6"
 compatibility_date = "2023-05-30"
 main = "src/index.js"
 name = "suisei-worker"
 node_compat = true
 workers_dev = true
-route = { pattern = "suisei.outv.im/*", zone_name = "outv.im" }
+route = { pattern = "suisei.cc/podcast.xml", zone_name = "suisei.cc" }
